@@ -29,7 +29,7 @@ class JwtService
         Auth::guard('api')->logout();
     }
 
-    public function buildResponse(string|null $token): SuccessLoginResource|FailedAuthorizationResource
+    public function buildResponse(string|null $token, string $message, bool $isRegistration = false): SuccessLoginResource|FailedAuthorizationResource
     {
         if (!$token) {
             return new FailedAuthorizationResource();
@@ -37,6 +37,6 @@ class JwtService
 
         $user = $this->getUser();
 
-        return new SuccessLoginResource($user, $token);
+        return new SuccessLoginResource($user, $token, $message, $isRegistration);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace app\Services\Auth;
 
+use App\Http\Resources\Auth\SuccessLoginResource;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 

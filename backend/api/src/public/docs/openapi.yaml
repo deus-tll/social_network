@@ -8,6 +8,25 @@ servers:
     url: 'http://localhost'
     description: 'Local API server'
 paths:
+  /api/auth/login:
+    post:
+      tags:
+        - auth
+      summary: 'Login a user'
+      operationId: api.auth.login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 'User logged in successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessLoginResource'
   /api/auth/register:
     post:
       tags:
@@ -54,6 +73,21 @@ components:
                 example: 'Error message 2'
           type: object
       type: object
+    LoginRequest:
+      required:
+        - name
+        - email
+        - password
+        - password_confirmation
+      properties:
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          example: '123456'
+      type: object
     RegisterRequest:
       required:
         - name
@@ -82,7 +116,7 @@ components:
           example: 'false'
         message:
           type: string
-          example: 'Invalid data'
+          example: "Invalid data, The passwords don't match, etc."
       type: object
     FailedAuthorizationResource:
       properties:

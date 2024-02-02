@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Services\Auth;
+namespace App\Services\Auth;
 
-use app\Repositories\UserRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

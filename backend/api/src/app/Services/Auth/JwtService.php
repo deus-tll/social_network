@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Services\Auth;
+namespace App\Services\Auth;
 
 use App\Http\Resources\Auth\FailedAuthorizationResource;
 use App\Http\Resources\Auth\SuccessLoginResource;

@@ -18,7 +18,7 @@ use OpenApi\Attributes as OAT;
         new OAT\Property(
             property: 'message',
             type: 'string',
-            example: 'User created successfully'.' | '.'User logged in successfully'
+            example: 'Registration was successful'.' | '.'User logged in successfully'
         ),
         new OAT\Property(
             property: 'user',

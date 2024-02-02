@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\Auth\FailedAuthorizationResource;
-use App\Http\Resources\Auth\SuccessLoginResource;
+use App\Http\Resources\Auth\SuccessAuthResponseResource;
 use App\Services\Auth\JwtService;
 use OpenApi\Attributes as OAT;
 
@@ -22,7 +22,7 @@ use OpenApi\Attributes as OAT;
         new OAT\Response(
             response: 200,
             description: 'User logged in successfully',
-            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessLoginResource')
+            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessAuthResponseResource')
         )]
 )]
 class LoginController extends Controller
@@ -31,7 +31,7 @@ class LoginController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function __invoke(LoginRequest $request): FailedAuthorizationResource|SuccessLoginResource
+    public function __invoke(LoginRequest $request): FailedAuthorizationResource|SuccessAuthResponseResource
     {
         $token = $this->jwtService->guardApiAttempt($request->validated());
 

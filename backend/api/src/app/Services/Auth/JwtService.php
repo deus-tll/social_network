@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Http\Resources\Auth\FailedAuthorizationResource;
-use App\Http\Resources\Auth\SuccessLoginResource;
+use App\Http\Resources\Auth\SuccessAuthResponseResource;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +31,7 @@ class JwtService
         Auth::guard('api')->logout();
     }
 
-    public function buildResponse(string|null $token, string $message, bool $isRegistration = false): SuccessLoginResource|FailedAuthorizationResource
+    public function buildResponse(string|null $token, string $message, bool $isRegistration = false): SuccessAuthResponseResource|FailedAuthorizationResource
     {
         if (!$token) {
             return new FailedAuthorizationResource();
@@ -39,6 +39,6 @@ class JwtService
 
         $user = $this->getUser();
 
-        return new SuccessLoginResource($user, $token, $message, $isRegistration);
+        return new SuccessAuthResponseResource($user, $token, $message, $isRegistration);
     }
 }

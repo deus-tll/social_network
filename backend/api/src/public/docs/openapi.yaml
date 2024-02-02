@@ -26,7 +26,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessLoginResource'
+                $ref: '#/components/schemas/SuccessAuthResponseResource'
   /api/auth/register:
     post:
       tags:
@@ -45,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessLoginResource'
+                $ref: '#/components/schemas/SuccessAuthResponseResource'
         '400':
           description: 'Password confirmation failed'
           content:
@@ -127,14 +127,14 @@ components:
           type: string
           example: Unauthorized
       type: object
-    SuccessLoginResource:
+    SuccessAuthResponseResource:
       properties:
         status:
           type: string
           example: 'true'
         message:
           type: string
-          example: 'Registration was successful | User logged in successfully'
+          example: 'Registration was successful, User logged in successfully, etc.'
         user:
           $ref: '#/components/schemas/User'
         authorization:

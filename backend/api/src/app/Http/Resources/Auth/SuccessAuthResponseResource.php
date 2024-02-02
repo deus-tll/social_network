@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use OpenApi\Attributes as OAT;
 
 #[OAT\Schema(
-    schema: 'SuccessLoginResource',
+    schema: 'SuccessAuthResponseResource',
     properties: [
         new OAT\Property(
             property: 'status',
@@ -18,7 +18,7 @@ use OpenApi\Attributes as OAT;
         new OAT\Property(
             property: 'message',
             type: 'string',
-            example: 'Registration was successful'.' | '.'User logged in successfully'
+            example: 'Registration was successful, User logged in successfully, etc.'
         ),
         new OAT\Property(
             property: 'user',
@@ -32,7 +32,7 @@ use OpenApi\Attributes as OAT;
         ),
     ]
 )]
-class SuccessLoginResource extends JsonResource
+class SuccessAuthResponseResource extends JsonResource
 {
     protected bool $isRegistration;
 

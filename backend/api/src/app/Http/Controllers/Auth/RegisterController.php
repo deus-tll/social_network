@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\BadRequestResource;
 use App\Http\Resources\Auth\FailedAuthorizationResource;
-use App\Http\Resources\Auth\SuccessLoginResource;
+use App\Http\Resources\Auth\SuccessAuthResponseResource;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\UserService;
 use OpenApi\Attributes as OAT;
@@ -24,7 +24,7 @@ use OpenApi\Attributes as OAT;
         new OAT\Response(
             response: 201,
             description: 'Registration was successful',
-            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessLoginResource')
+            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessAuthResponseResource')
         ),
         new OAT\Response(
             response: 400,
@@ -40,7 +40,7 @@ class RegisterController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function __invoke(RegisterRequest $request): BadRequestResource|FailedAuthorizationResource|SuccessLoginResource
+    public function __invoke(RegisterRequest $request): BadRequestResource|FailedAuthorizationResource|SuccessAuthResponseResource
     {
         if ($request->input('password') != $request->input('password_confirmation')){
             return new BadRequestResource("The passwords don't match");

@@ -2,10 +2,11 @@
 
 namespace App\Services\Auth;
 
-use App\Http\Resources\Auth\FailedAuthorizationResource;
-use App\Http\Resources\Auth\SuccessAuthResponseResource;
+use App\Http\Resources\Auth\SuccessAuthResource;
+use App\Http\Resources\BaseWithResponseResource;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class JwtService
 {
@@ -31,14 +32,14 @@ class JwtService
         Auth::guard('api')->logout();
     }
 
-    public function buildResponse(string|null $token, string $message, bool $isRegistration = false): SuccessAuthResponseResource|FailedAuthorizationResource
+    public function buildResponse(string|null $token, string $message, bool $isRegistration = false): SuccessAuthResource|BaseWithResponseResource
     {
         if (!$token) {
-            return new FailedAuthorizationResource();
+            return new BaseWithResponseResource(null, 'Unauthorized', ResponseAlias::HTTP_UNAUTHORIZED, 'failure');
         }
 
         $user = $this->getUser();
 
-        return new SuccessAuthResponseResource($user, $token, $message, $isRegistration);
+        return new SuccessAuthResource($user, $token, $message, $isRegistration);
     }
 }

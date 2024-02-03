@@ -26,7 +26,92 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessAuthResponseResource'
+                $ref: '#/components/schemas/SuccessAuthResource'
+        '401':
+          description: 'Unauthorized attempt to get access'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: failure }
+                  message: { type: string, example: Unauthorized }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/logout:
+    get:
+      tags:
+        - auth
+      summary: 'Perform logout for user'
+      operationId: api.auth.logout
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'User successfully logged out'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: success }
+                  message: { type: string, example: 'User successfully logged out' }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/profile:
+    get:
+      tags:
+        - auth
+      summary: 'Get a user profile'
+      operationId: api.auth.profile
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'Profile data extracted successfully'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: success }
+                  message: { type: string, example: 'Profile data extracted successfully' }
+                  user: { $ref: '#/components/schemas/User' }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/refresh-token:
+    get:
+      tags:
+        - auth
+      summary: 'Refresh user token'
+      operationId: api.auth.refreshToken
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'Token successfully refreshed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResource'
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
   /api/auth/register:
     post:
       tags:
@@ -45,13 +130,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessAuthResponseResource'
+                $ref: '#/components/schemas/SuccessAuthResource'
         '400':
-          description: 'Password confirmation failed'
+          description: "The passwords don't match"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BadRequestResource'
+                properties:
+                  status: { type: string, example: failure }
+                  message: { type: string, example: "The passwords don't match" }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
 components:
   schemas:
     ValidationError:
@@ -109,32 +203,14 @@ components:
           type: string
           example: '123456'
       type: object
-    BadRequestResource:
+    SuccessAuthResource:
       properties:
         status:
           type: string
-          example: 'false'
+          example: success
         message:
           type: string
-          example: "Invalid data, The passwords don't match, etc."
-      type: object
-    FailedAuthorizationResource:
-      properties:
-        status:
-          type: string
-          example: 'false'
-        message:
-          type: string
-          example: Unauthorized
-      type: object
-    SuccessAuthResponseResource:
-      properties:
-        status:
-          type: string
-          example: 'true'
-        message:
-          type: string
-          example: 'Registration was successful, User logged in successfully, etc.'
+          example: '"Registration was successful" or "User logged in successfully" or "Token successfully refreshed"'
         user:
           $ref: '#/components/schemas/User'
         authorization:
@@ -148,6 +224,15 @@ components:
         type:
           type: string
           example: bearer
+      type: object
+    InternalServerErrorResource:
+      properties:
+        status:
+          type: string
+          example: failure
+        message:
+          type: string
+          example: 'Internal server error'
       type: object
     User:
       properties:

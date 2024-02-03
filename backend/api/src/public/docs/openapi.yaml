@@ -7,6 +7,145 @@ servers:
   -
     url: 'http://localhost'
     description: 'Local API server'
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - auth
+      summary: 'Login a user'
+      operationId: api.auth.login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 'User logged in successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResource'
+        '401':
+          description: 'Unauthorized attempt to get access'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: failure }
+                  message: { type: string, example: Unauthorized }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/logout:
+    get:
+      tags:
+        - auth
+      summary: 'Perform logout for user'
+      operationId: api.auth.logout
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'User successfully logged out'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: success }
+                  message: { type: string, example: 'User successfully logged out' }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/profile:
+    get:
+      tags:
+        - auth
+      summary: 'Get a user profile'
+      operationId: api.auth.profile
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'Profile data extracted successfully'
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: success }
+                  message: { type: string, example: 'Profile data extracted successfully' }
+                  user: { $ref: '#/components/schemas/User' }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/refresh-token:
+    get:
+      tags:
+        - auth
+      summary: 'Refresh user token'
+      operationId: api.auth.refreshToken
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: 'Token successfully refreshed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResource'
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
+  /api/auth/register:
+    post:
+      tags:
+        - auth
+      summary: 'Register a user'
+      operationId: api.auth.register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: 'Registration was successful'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResource'
+        '400':
+          description: "The passwords don't match"
+          content:
+            application/json:
+              schema:
+                properties:
+                  status: { type: string, example: failure }
+                  message: { type: string, example: "The passwords don't match" }
+                type: object
+        '500':
+          description: 'Some internal server error occurred'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorResource'
 components:
   schemas:
     ValidationError:
@@ -27,6 +166,86 @@ components:
                 type: string
                 example: 'Error message 2'
           type: object
+      type: object
+    LoginRequest:
+      required:
+        - name
+        - email
+        - password
+        - password_confirmation
+      properties:
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          example: '123456'
+      type: object
+    RegisterRequest:
+      required:
+        - name
+        - email
+        - password
+        - password_confirmation
+      properties:
+        name:
+          type: string
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          example: '123456'
+        password_confirmation:
+          type: string
+          example: '123456'
+      type: object
+    SuccessAuthResource:
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: '"Registration was successful" or "User logged in successfully" or "Token successfully refreshed"'
+        user:
+          $ref: '#/components/schemas/User'
+        authorization:
+          $ref: '#/components/schemas/TokenResource'
+      type: object
+    TokenResource:
+      properties:
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0L2FwaS9hdXRoL3JlZ2lzdGVyIiwiaWF0IjoxNzA2NTUyMTM4LCJleHAiOjE3MDY5MTIxMzgsIm5iZiI6MTcwNjU1MjEzOCwianRpIjoiRk9hclkyZ2VvckhPT1llbSIsInN1YiI6IjQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3IiwiZW1haWwiOiJ2YXN5YTJAdmFzeWEuY29tIiwibmFtZSI6InZhc3lhMiJ9.APeVTaT7gnkVVboKkfXDndq1vjQFiiaMPCw21aS9hL8
+        type:
+          type: string
+          example: bearer
+      type: object
+    InternalServerErrorResource:
+      properties:
+        status:
+          type: string
+          example: failure
+        message:
+          type: string
+          example: 'Internal server error'
+      type: object
+    User:
+      properties:
+        id:
+          type: integer
+          example: '2'
+        name:
+          type: string
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          example: john@example.com
       type: object
   securitySchemes:
     BearerToken:

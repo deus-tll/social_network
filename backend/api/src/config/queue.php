@@ -71,6 +71,13 @@ return [
             'after_commit' => false,
         ],
 
+        'redis_avatars' => [
+            'driver' => 'redis',
+            'connection' => 'avatars',
+            'queue' => env('REDIS_AVATARS_QUEUE', 'avatars.jobs'),
+            'retry_after' => 90,
+            'block_for' => null,
+        ],
     ],
 
     /*

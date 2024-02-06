@@ -24,8 +24,8 @@ RUN composer install
 # Publication of providers
 RUN php /var/www/html/artisan vendor:publish --provider="PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider"
 
-# Copying the Supervisor configuration file for Laravel application, including php-fpm, migration, API documentation generation and web server
-COPY supervisor_api.conf /etc/supervisor/conf.d/supervisord.conf
+# Supervisor configuration for managing PHP-FPM and Laravel queue worker (avatars.jobs).
+COPY supervisor_avatars.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Open a port to access the application
 EXPOSE 8000

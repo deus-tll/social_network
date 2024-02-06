@@ -225,15 +225,6 @@ components:
           type: string
           example: bearer
       type: object
-    InternalServerErrorResource:
-      properties:
-        status:
-          type: string
-          example: failure
-        message:
-          type: string
-          example: 'Internal server error'
-      type: object
     User:
       properties:
         id:

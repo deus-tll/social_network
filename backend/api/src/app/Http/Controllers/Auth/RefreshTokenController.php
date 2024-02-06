@@ -34,7 +34,7 @@ class RefreshTokenController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function refreshToken(): SuccessAuthResource|InternalServerErrorResource
+    public function __invoke(): SuccessAuthResource|InternalServerErrorResource
     {
         try {
             $token = $this->jwtService->guardApiRefresh();

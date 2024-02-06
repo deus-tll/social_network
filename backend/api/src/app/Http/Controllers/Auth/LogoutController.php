@@ -47,7 +47,7 @@ class LogoutController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function logout(): BaseWithResponseResource|InternalServerErrorResource
+    public function __invoke(): BaseWithResponseResource|InternalServerErrorResource
     {
         try {
             $this->jwtService->userLogout();

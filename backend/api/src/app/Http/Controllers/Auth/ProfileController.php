@@ -52,7 +52,7 @@ class ProfileController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function profile(): BaseWithResponseResource|InternalServerErrorResource
+    public function __invoke(): BaseWithResponseResource|InternalServerErrorResource
     {
         try {
             $user = $this->jwtService->getUser();

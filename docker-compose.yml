@@ -11,12 +11,29 @@ services:
     ports:
       - '8000:8000'
     env_file:
-      - ./.env
+      - .env
     depends_on:
       - db.mysql.main
       - db.redis.cache
     networks:
       - s_net
+
+  laravel.jobs.avatars:
+    build:
+      dockerfile: Dockerfile_avatars
+      context: ./backend/api
+    container_name: laravel.jobs.avatars
+    volumes:
+      - ./backend/api/src:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - db.mysql.main
+      - db.redis.cache
+      - db.redis.jobs
+    networks:
+      - s_net
+
 
   db.mysql.main:
     build:
@@ -39,8 +56,16 @@ services:
     container_name: db.redis.cache
     volumes:
       - ./volumes/db/redis/cache:/data
-    ports:
-      - '6379:6379'
+    networks:
+      - s_net
+
+  db.redis.jobs:
+    build:
+      dockerfile: Dockerfile
+      context: ./services/redis
+    container_name: db.redis.jobs
+    volumes:
+      - ./volumes/db/redis/jobs:/data
     networks:
       - s_net
 

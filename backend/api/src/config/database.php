@@ -161,7 +161,7 @@ return [
             'username' => env('REDIS_JOBS_USERNAME'),
             'password' => env('REDIS_JOBS_PASSWORD', null),
             'port' => env('REDIS_JOBS_PORT', '6379'),
-            'database' => env('REDIS_AVATARS_JOBS_DB', '1'),
+            'database' => env('REDIS_JOBS_AVATARS_DB', '1'),
         ]
     ],
 

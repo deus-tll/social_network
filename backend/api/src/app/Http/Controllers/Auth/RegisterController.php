@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\Auth\SuccessAuthResource;
 use App\Http\Resources\BaseWithResponseResource;
-use app\Http\Resources\Errors\InternalServerErrorResource;
+use App\Http\Resources\Errors\InternalServerErrorResource;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\UserService;
+use Exception;
 use OpenApi\Attributes as OAT;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
@@ -72,7 +73,7 @@ class RegisterController extends Controller
 
             return $this->jwtService->buildResponse($token, 'Registration was successful', true);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return new InternalServerErrorResource(['error' => $e->getMessage()]);
         }
     }

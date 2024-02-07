@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Http\Resources\Errors;
+namespace App\Http\Resources\Errors;
 
-use app\Http\Resources\BaseWithResponseResource;
+use App\Http\Resources\BaseWithResponseResource;
 use OpenApi\Attributes as OAT;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 

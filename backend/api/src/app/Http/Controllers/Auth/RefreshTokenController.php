@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Auth\SuccessAuthResource;
-use app\Http\Resources\Errors\InternalServerErrorResource;
+use App\Http\Resources\Errors\InternalServerErrorResource;
 use App\Services\Auth\JwtService;
 use OpenApi\Attributes as OAT;
 

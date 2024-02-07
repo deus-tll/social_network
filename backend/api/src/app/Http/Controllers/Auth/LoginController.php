@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\Auth\SuccessAuthResource;
 use App\Http\Resources\BaseWithResponseResource;
-use app\Http\Resources\Errors\InternalServerErrorResource;
+use App\Http\Resources\Errors\InternalServerErrorResource;
 use App\Services\Auth\JwtService;
 use OpenApi\Attributes as OAT;
 

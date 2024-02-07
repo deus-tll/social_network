@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Jobs\Profile\GenerateInitialAvatarJob;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,13 @@ class UserService
 
     public function create(mixed $data): Model|Builder
     {
-        return $this->userRepository->create($data);
+        $user = $this->userRepository->create($data);
+
+        info('RegisterController | user_id:', [$user->id]);
+
+        GenerateInitialAvatarJob::dispatch($user->id)
+            ->onQueue('avatars.jobs');
+
+        return $user;
     }
 }

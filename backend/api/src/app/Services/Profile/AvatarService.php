@@ -68,7 +68,6 @@ class AvatarService
     private function storeAndGetAvatarFromGravatar(int $user_id, string $email, string $type): string
     {
         $url = Gravatar::get($email, $type);
-        //info('url', [$url]);
         $this->storageService->putFromUrl($user_id, $type, $url);
 
         return $url;

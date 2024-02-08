@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RefreshTokenController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Profile\UploadUserAvatarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +33,8 @@ Route::group([
     Route::get('auth/profile', ProfileController::class)->name('api.auth.profile');
     Route::get('auth/refresh-token', RefreshTokenController::class)->name('api.auth.refreshToken');
     Route::get('auth/logout', LogoutController::class)->name('api.auth.logout');
+});
+
+Route::group(['middleware' => ['auth:api'], 'prefix' => 'profile'], function () {
+    Route::post('/avatar', UploadUserAvatarController::class)->name('profile.avatar.upload');
 });

@@ -5,71 +5,112 @@ namespace App\Services\Profile;
 use App\Repositories\UserRepository;
 use Creativeorange\Gravatar\Facades\Gravatar;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
-class AvatarService
+readonly class AvatarService
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly AvatarStorageService $storageService
+        private UserRepository       $userRepository,
+        private AvatarStorageService $storageService
     ){}
 
     /**
      * Uploads new avatar
-     * @param int $user_id
+     * @param int $userId
      * @param UploadedFile $file
      * @return void
      */
-    public function uploadAvatar(int $user_id, UploadedFile $file): void
+    public function uploadAvatar(int $userId, UploadedFile $file): void
     {
-        $this->storageService->putFromContent($user_id, 'original', $file->getContent());
+        $extension = $file->getClientOriginalExtension();
+
+        $this->storageService->putAvatar($userId, 'original', $file->getContent(), $extension);
     }
 
     /**
      * Optimizes avatar to different sizes with extension ".webp"
-     * @param int $user_id
-     * @return void
+     * @param int $userId
+     * @return array
      */
-    public function optimizeAvatar(int $user_id)
+    public function optimizeAvatar(int $userId): array
     {
+        $avatarSizes = config('gravatar');
 
+        $avatars = [];
+
+        foreach ($avatarSizes as $type => $config) {
+            if ($type === 'default') {
+                continue;
+            }
+
+            $size = $config['size'];
+
+            $fileDir = '/' . $userId . '/';
+
+            $files = Storage::disk(env('AVATAR_DISK'))->files($fileDir);
+
+            $originalFile = collect($files)->first(function ($file) {
+                return Str::startsWith(pathinfo($file, PATHINFO_BASENAME), 'original');
+            });
+
+            if($originalFile) {
+                $fileContent = Storage::disk(env('AVATAR_DISK'))->get($originalFile);
+
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($fileContent);
+
+                $image->scale($size, $size);
+
+                $avatars['url_' . $type] = $this->storageService->putAvatar($userId, $type, $image->toWebp());
+            }
+        }
+
+        return $avatars;
     }
+
+
 
     /**
      * Generates initial avatar(from email or random)
-     * @param int $user_id
+     * @param int $userId
      * @return array
      */
-    public function generateAvatar(int $user_id): array
+    public function generateAvatar(int $userId): array
     {
-        $user = $this->userRepository->findOrFail($user_id);
+        $user = $this->userRepository->findOrFail($userId);
 
         $email = strtolower(trim($user->email));
 
-        return $this->getAvatars($user_id, $email);
+        return $this->getAvatars($userId, $email);
     }
 
     /**
      * Gets avatars from the Gravatar using email
-     * @param int $user_id
+     * @param int $userId
      * @param string $email
      * @return array
      */
-    private function getAvatars(int $user_id, string $email): array
+    private function getAvatars(int $userId, string $email): array
     {
-        $url_large = $this->storeAndGetAvatarFromGravatar($user_id, $email, 'large');
-        $url_medium = $this->storeAndGetAvatarFromGravatar($user_id, $email, 'medium');
-        $url_small = $this->storeAndGetAvatarFromGravatar($user_id, $email, 'small');
+        $urlLarge = $this->storeAndGetAvatarFromGravatar($userId, $email, 'large');
+        $urlMedium = $this->storeAndGetAvatarFromGravatar($userId, $email, 'medium');
+        $urlSmall = $this->storeAndGetAvatarFromGravatar($userId, $email, 'small');
 
-        //info('urls', [$url_large, $url_medium, $url_small]);
-
-        return [$url_large, $url_medium, $url_small];
+        return [
+            'url_large' => $urlLarge,
+            'url_medium' => $urlMedium,
+            'url_small' => $urlSmall
+        ];
     }
 
-    private function storeAndGetAvatarFromGravatar(int $user_id, string $email, string $type): string
+    private function storeAndGetAvatarFromGravatar(int $userId, string $email, string $type): string
     {
         $url = Gravatar::get($email, $type);
-        $this->storageService->putFromUrl($user_id, $type, $url);
+        $imageContent = file_get_contents($url);
 
-        return $url;
+        return $this->storageService->putAvatar($userId, $type, $imageContent);
     }
 }

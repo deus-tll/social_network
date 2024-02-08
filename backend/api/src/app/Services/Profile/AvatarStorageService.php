@@ -6,24 +6,17 @@ use Illuminate\Support\Facades\Storage;
 
 class AvatarStorageService
 {
-    public function putFromUrl(int $user_id, string $avatar_type, string $avatar_url): void
+    public function putAvatar(int $userId, string $avatarType, string $avatar, string $extension = 'webp'): string
     {
-        $imageContent = file_get_contents($avatar_url);
+        $path = $this->getAvatarPath($userId, $avatarType, $extension);
 
-        $path = $this->getAvatarPath($user_id, $avatar_type);
+        Storage::disk(env('AVATAR_DISK'))->put($path, $avatar);
 
-        Storage::disk('avatars_local')->put($path, $imageContent);
+        return Storage::disk(env('AVATAR_DISK'))->url($path);
     }
 
-    public function putFromContent(int $user_id, string $avatar_type, string $avatar_content): void
+    private function getAvatarPath(int $userId, string $avatarType, string $extension): string
     {
-        $path = $this->getAvatarPath($user_id, $avatar_type);
-
-        Storage::disk('avatars_local')->put($path, $avatar_content);
-    }
-
-    private function getAvatarPath(int $user_id, string $avatar_type): string
-    {
-        return $user_id . '/' . $avatar_type . '.webp';
+        return $userId . '/' . $avatarType . '.' . $extension;
     }
 }

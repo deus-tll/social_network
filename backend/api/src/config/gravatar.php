@@ -10,15 +10,15 @@ return array(
         'forceExtension' => 'webp',
     ),
     'large' => array (
-        'size'   => 256,
+        'size'   => env('AVATAR_SIZE_LARGE', 256),
         'fallback' => 'robohash',
     ),
     'medium' => array (
-        'size'   => 128,
+        'size'   => env('AVATAR_SIZE_MEDIUM', 128),
         'fallback' => 'robohash',
     ),
     'small' => array (
-        'size'   => 64,
+        'size'   => env('AVATAR_SIZE_SMALL', 64),
         'fallback' => 'robohash',
     ),
 );

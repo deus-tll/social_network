@@ -8,8 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use function Laravel\Prompts\error;
 
-class GenerateInitialAvatarJob implements ShouldQueue
+class OptimizeAvatarJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,15 +24,19 @@ class GenerateInitialAvatarJob implements ShouldQueue
         $this->userId = $userId;
     }
 
-
     /**
      * Execute the job.
      */
     public function handle(AvatarService $avatarService): void
     {
-        $avatars = $avatarService->generateAvatar($this->userId);
+        try {
+            $avatars = $avatarService->optimizeAvatar($this->userId);
 
-        info('avatars: ', $avatars);
-        //socket
+            info('avatars: ', $avatars);
+            //socket
+        }
+        catch (\Exception $e){
+            error($e->getMessage());
+        }
     }
 }

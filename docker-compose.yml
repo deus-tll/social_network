@@ -1,6 +1,22 @@
 version: '3'
 services:
 
+  frontend.public:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend/public
+    container_name: frontend.public
+    volumes:
+      - ./frontend/public/src:/usr/src/app
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - laravel.api
+    networks:
+      - s_net
+
   laravel.api:
     build:
       dockerfile: Dockerfile_api

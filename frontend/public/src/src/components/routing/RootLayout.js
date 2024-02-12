@@ -11,7 +11,7 @@ const RootLayout = () => {
   const storedUser = localStorage.getItem('user');
 
   if (storedUser && storedToken) {
-    dispatch(setCredentials({ user: storedUser, accessToken: storedToken }));
+    dispatch(setCredentials({ user: JSON.parse(storedUser), accessToken: storedToken }));
   }
 
   return (

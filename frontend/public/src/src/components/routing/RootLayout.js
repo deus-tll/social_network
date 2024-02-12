@@ -16,11 +16,11 @@ const RootLayout = () => {
 
   return (
     <div className="container mt-4">
-      <main style={{minHeight: 'calc(100vh - 250px)'}}>
+      <main style={{minHeight: 'calc(100vh - 90px)'}}>
         <Outlet/>
       </main>
 
-      <footer className=" mt-4">
+      <footer className="mb-5">
         <p>&copy; {new Date().getFullYear()} {appName}</p>
       </footer>
     </div>

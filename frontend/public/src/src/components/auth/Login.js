@@ -1,10 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch} from 'react-redux';
-import {Button, Form} from 'react-bootstrap';
+import {Alert, Button, Form} from 'react-bootstrap';
 import {useLoginMutation} from '../../services/auth/authApiSliceService';
 import myLog from "../../helpers/myLog";
 import {setCredentials} from "../../services/auth/authSliceService";
+import AuthWrapper from "./AuthWrapper";
 
 const Login = () => {
   const emailRef = useRef()
@@ -12,7 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const [errMsg, setErrorMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
   const navigate = useNavigate()
 
   const [login, { isLoading }] = useLoginMutation()
@@ -41,15 +42,13 @@ const Login = () => {
       navigate('/welcome');
     }
     catch (error) {
-      if (!error?.originalStatus) {
-        setErrorMsg('No Server Response');
-      } else if (error.originalStatus === 401) {
-        setErrorMsg('Unauthorized');
+      if (error.status === 401) {
+        setErrorMsg(`${error.data.status}: ${error.data.message}`);
       } else {
         setErrorMsg('Login Failed');
       }
 
-      myLog('Login', 'handleSubmit', `error ${error}`);
+      myLog('Login', 'handleSubmit', `error - ${JSON.stringify(error)}\n\n ${error}`);
 
       errorRef?.current?.focus();
     }
@@ -60,41 +59,66 @@ const Login = () => {
   const handlePasswordInput = (e) => setPassword(e.target.value);
 
 
-  return isLoading ? <h1>Loading...</h1> : (
-    <section className="login">
-      <p ref={errorRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+  return (
+    <AuthWrapper>
+      <section>
+        {isLoading ? (
+          <h1>Loading...</h1>
+        ) : (
+          <div>
+            <Form onSubmit={handleSubmit}>
+              <h3>Sign In</h3>
+              <div className="mb-3">
+                <label>Email address</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={handleEmailInput}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label>Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={handlePasswordInput}
+                  required
+                />
+              </div>
 
-      <h1>Login</h1>
+              <div className="mb-3">
+                <div className="custom-control custom-checkbox">
+                  <input
+                    type="checkbox"
+                    className="custom-control-input"
+                    id="customCheck1"
+                  />
+                  <label className="custom-control-label" htmlFor="customCheck1">
+                    Remember me
+                  </label>
+                </div>
+              </div>
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Електронна пошта</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Введіть електронну пошту"
-            ref={emailRef}
-            value={email}
-            onChange={handleEmailInput}
-            required
-          />
-        </Form.Group>
+              <div className="d-grid">
+                <button type="submit" className="btn btn-primary">
+                  Submit
+                </button>
+              </div>
+              <p className="forgot-password text-right">
+                Forgot <a href="#">password?</a>
+              </p>
+            </Form>
 
-        <Form.Group controlId="formBasicPassword">
-          <Form.Label>Пароль</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={handlePasswordInput}
-            required
-          />
-        </Form.Group>
-
-        <Button variant="primary" type="submit">
-          Увійти
-        </Button>
-      </Form>
-    </section>
+            {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
+          </div>
+        )}
+      </section>
+    </AuthWrapper>
   );
 };
 

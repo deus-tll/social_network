@@ -10,7 +10,7 @@ import RequireAuth from "./components/routing/RequireAuth";
 function App() {
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
+      <Route path="login" element={<Login/>}/>
 
       <Route path="/" element={<RootLayout/>}>
         {/* public routes */}
@@ -18,7 +18,7 @@ function App() {
 
         {/* protected routes */}
         <Route element={<RequireAuth/>}>
-          <Route path="welcome" element={<Welcome />} />
+          <Route path="welcome" element={<Welcome/>}/>
         </Route>
       </Route>
     </Routes>

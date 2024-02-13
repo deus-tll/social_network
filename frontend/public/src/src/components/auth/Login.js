@@ -8,24 +8,24 @@ import {setCredentials} from "../../services/auth/authSliceService";
 import AuthWrapper from "./AuthWrapper";
 
 const Login = () => {
-  const emailRef = useRef()
-  const errorRef = useRef()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const emailRef = useRef();
+  const errorRef = useRef();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const [errorMsg, setErrorMsg] = useState('')
-  const navigate = useNavigate()
-
-  const [login, { isLoading }] = useLoginMutation()
-  const dispatch = useDispatch()
+  const [login, { isLoading }] = useLoginMutation();
 
   useEffect(() => {
     emailRef?.current?.focus();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setErrorMsg('');
-  }, [email, password])
+    setErrorMessage('');
+  }, [email, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,9 +43,9 @@ const Login = () => {
     }
     catch (error) {
       if (error.status === 401) {
-        setErrorMsg(`${error.data.status}: ${error.data.message}`);
+        setErrorMessage(`${error.data.status}: ${error.data.message}`);
       } else {
-        setErrorMsg('Login Failed');
+        setErrorMessage('Login Failed');
       }
 
       myLog('Login', 'handleSubmit', `error - ${JSON.stringify(error)}\n\n ${error}`);
@@ -114,7 +114,7 @@ const Login = () => {
               </p>
             </Form>
 
-            {errorMsg && <Alert variant="danger">{errorMsg}</Alert>}
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
           </div>
         )}
       </section>

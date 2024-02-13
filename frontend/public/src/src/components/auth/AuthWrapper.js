@@ -1,3 +1,5 @@
+import "./styles/auth.css"
+
 const AuthWrapper = (props) => {
   return (
     <div className="auth-wrapper">

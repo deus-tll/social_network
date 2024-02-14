@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Traits\ValidationTrait;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use OpenApi\Attributes as OAT;
 
 #[OAT\Schema(
     schema: 'LoginRequest',
-    required: ['name', 'email', 'password', 'password_confirmation'],
+    required: ['email', 'password'],
     properties: [
         new OAT\Property(
             property: 'email',
@@ -25,6 +26,8 @@ use OpenApi\Attributes as OAT;
 )]
 class LoginRequest extends FormRequest
 {
+    use ValidationTrait;
+
     /**
      * Get the validation rules that apply to the request.
      *

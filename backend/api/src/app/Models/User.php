@@ -19,15 +19,25 @@ use OpenApi\Attributes as OAT;
             example: '2'
         ),
         new OAT\Property(
-            property: 'name',
+            property: 'first_name',
             type: 'string',
-            example: 'John Doe'
+            example: 'John'
+        ),
+        new OAT\Property(
+            property: 'last_name',
+            type: 'string',
+            example: 'Doe'
         ),
         new OAT\Property(
             property: 'email',
             type: 'string',
             format: 'email',
             example: 'john@example.com'
+        ),
+        new OAT\Property(
+            property: 'username',
+            type: 'string',
+            example: 'john_doe123'
         ),
     ]
 )]
@@ -41,8 +51,10 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
+        'username',
         'password',
     ];
 
@@ -75,7 +87,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'email'=>$this->email,
-            'name'=>$this->name
+            'first_name'=>$this->first_name,
+            'last_name'=>$this->last_name,
+            'username'=>$this->username
         ];
     }
 }

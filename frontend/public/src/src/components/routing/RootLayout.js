@@ -5,13 +5,13 @@ import {useDispatch} from "react-redux";
 const RootLayout = () => {
   const appName = process.env.REACT_APP_NAME;
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const storedToken = localStorage.getItem('accessToken');
   const storedUser = localStorage.getItem('user');
 
   if (storedUser && storedToken) {
-    dispatch(setCredentials({ user: JSON.parse(storedUser), accessToken: storedToken }));
+    dispatch(setCredentials({ user: JSON.parse(storedUser), accessToken: storedToken, rememberMe: true }));
   }
 
   return (
@@ -21,7 +21,7 @@ const RootLayout = () => {
       </main>
 
       <footer className="mb-5">
-        <p>&copy; {new Date().getFullYear()} {appName}</p>
+        <p className="text-[8pt]">&copy; {new Date().getFullYear()} {appName}</p>
       </footer>
     </div>
   );

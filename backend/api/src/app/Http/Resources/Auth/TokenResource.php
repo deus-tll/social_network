@@ -25,7 +25,7 @@ class TokenResource extends JsonResource
     public function __construct(string $token)
     {
         $data = [
-            'accessToken' => $token,
+            'access_token' => $token,
             'type' => 'bearer'
         ];
 

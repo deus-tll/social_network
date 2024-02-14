@@ -31,7 +31,7 @@ Route::group([
     'middleware' => ['auth:api']
 ], function() {
     Route::get('auth/profile', ProfileController::class)->name('api.auth.profile');
-    Route::get('auth/refresh-token', RefreshTokenController::class)->name('api.auth.refreshToken');
+//    Route::get('auth/refresh-token', RefreshTokenController::class)->name('api.auth.refreshToken');
     Route::get('auth/logout', LogoutController::class)->name('api.auth.logout');
 });
 

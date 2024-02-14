@@ -189,17 +189,23 @@ components:
         - password
         - password_confirmation
       properties:
-        name:
+        firstName:
           type: string
-          example: 'John Doe'
+          example: John
+        lastName:
+          type: string
+          example: Doe
         email:
           type: string
           format: email
           example: john@example.com
+        username:
+          type: string
+          example: john_doe123
         password:
           type: string
           example: '123456'
-        password_confirmation:
+        passwordConfirmation:
           type: string
           example: '123456'
       type: object
@@ -210,7 +216,7 @@ components:
           example: success
         message:
           type: string
-          example: '"Registration was successful" or "User logged in successfully" or "Token successfully refreshed"'
+          example: '"Registration was successful" or "User logged in successfully"'
         user:
           $ref: '#/components/schemas/User'
         authorization:
@@ -239,13 +245,19 @@ components:
         id:
           type: integer
           example: '2'
-        name:
+        firstName:
           type: string
-          example: 'John Doe'
+          example: John
+        lastName:
+          type: string
+          example: Doe
         email:
           type: string
           format: email
           example: john@example.com
+        username:
+          type: string
+          example: john_doe123
       type: object
   securitySchemes:
     BearerToken:

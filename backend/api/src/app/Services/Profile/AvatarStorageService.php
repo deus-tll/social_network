@@ -4,7 +4,7 @@ namespace App\Services\Profile;
 
 use Illuminate\Support\Facades\Storage;
 
-class AvatarStorageService
+readonly class AvatarStorageService
 {
     public function putAvatar(int $userId, string $avatarType, string $avatar, string $extension = 'webp'): string
     {

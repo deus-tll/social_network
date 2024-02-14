@@ -8,6 +8,7 @@ use App\Http\Resources\Auth\SuccessAuthResource;
 use App\Http\Resources\BaseWithResponseResource;
 use App\Http\Resources\Errors\InternalServerErrorResource;
 use App\Services\Auth\JwtService;
+use Exception;
 use OpenApi\Attributes as OAT;
 
 #[OAT\Post(
@@ -62,7 +63,7 @@ class LoginController extends Controller
 
             return $this->jwtService->buildResponse($token, 'User logged in successfully');
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return new InternalServerErrorResource(['error' => $e->getMessage()]);
         }
     }

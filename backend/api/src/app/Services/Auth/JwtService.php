@@ -8,9 +8,14 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class JwtService
+readonly class JwtService
 {
-    protected string $guardName = 'api';
+    protected string $guardName;
+
+    public function __construct()
+    {
+        $this->guardName = 'api';
+    }
 
     public function guardApiAttempt(array $credentials): ?string
     {

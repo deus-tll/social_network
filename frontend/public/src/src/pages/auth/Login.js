@@ -33,28 +33,42 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const result = await login(formData).unwrap();
-      const access_token = result.data.authorization.access_token;
-      const user = result.data.user;
+    const form = e.currentTarget;
 
-      dispatch(setCredentials({ user, accessToken: access_token, rememberMe }));
+    if (form.checkValidity()) {
+      try {
+        const result = await login(formData).unwrap();
+        const access_token = result.data.authorization.access_token;
+        const user = result.data.user;
 
-      navigate('/welcome');
-    } catch (error) {
-      if (error.originalStatus) {
-        setErrors({general: error.error});
-      } else if(error.status === 422) {
-        setErrors(error.data.errors);
-      } else if (error.status === 401 || 500) {
-        setErrors({ general: `${error?.data?.status}: ${error?.data?.message}. ${error?.data?.error}` });
-      } else {
-        setErrors({ general: 'Login Failed' });
+        dispatch(setCredentials({ user, accessToken: access_token, rememberMe }));
+
+        navigate('/welcome');
+      } catch (errorData) {
+        if (errorData.originalStatus) {
+          setErrors({general: errorData.error});
+        } else if(errorData.status === 422) {
+          setErrors(errorData.data.errors);
+        } else if (errorData.status === 401 || 500) {
+          let status = errorData?.data?.data?.status;
+          let message = errorData?.data?.data?.message;
+          let error = errorData?.data?.data?.error;
+
+          let errorMessage = `${status ? status : ''}: ${message ? message : ''}. ${error ? error : ''}`;
+
+          setErrors({ general: errorMessage });
+        } else {
+          setErrors({ general: 'Login Failed' });
+        }
+
+        myLog('Login', 'handleSubmit', `error - ${JSON.stringify(errorData)}`);
+
+        errorRef?.current?.focus();
       }
-
-      myLog('Login', 'handleSubmit', `error - ${JSON.stringify(error)}`);
-
-      errorRef?.current?.focus();
+    }
+    else {
+      e.stopPropagation();
+      setErrors({ general: 'Please fill out all required fields correctly.' });
     }
   };
 
@@ -77,23 +91,22 @@ const Login = () => {
               <h3>Sign In</h3>
 
               <Form.Group className="mb-3" controlId="email">
-                <Form.Label>
-                  Email address
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    ref={emailRef}
-                    value={formData.email}
-                    onChange={handleChange}
-                    name="email"
-                    isInvalid={errors.hasOwnProperty('email')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Email address</Form.Label>
+
+                <Form.Control
+                  type="email"
+                  placeholder="Enter email"
+                  ref={emailRef}
+                  value={formData.email}
+                  onChange={handleChange}
+                  name="email"
+                  isInvalid={errors.hasOwnProperty('email')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('email') && errors.email[0]}
@@ -101,22 +114,21 @@ const Login = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="password">
-                <Form.Label>
-                  Password
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    name="password"
-                    isInvalid={errors.hasOwnProperty('password')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Password</Form.Label>
+
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  name="password"
+                  isInvalid={errors.hasOwnProperty('password')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('password') && errors.password[0]}
@@ -132,7 +144,7 @@ const Login = () => {
                       id="customCheck1"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}/>
-                    Remember me
+                    <span className="ps-1">Remember me</span>
                   </label>
                 </div>
               </div>

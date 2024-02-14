@@ -32,30 +32,44 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const result = await register(formData).unwrap();
+    const form = e.currentTarget;
 
-      const access_token = result.data.authorization.access_token;
-      const user = result.data.user;
+    if (form.checkValidity()){
+      try {
+        const result = await register(formData).unwrap();
 
-      dispatch(setCredentials({ user: user, accessToken: access_token, rememberMe: true }));
+        const access_token = result.data.authorization.access_token;
+        const user = result.data.user;
 
-      navigate('/welcome');
-    }
-    catch (error) {
-      if (error.originalStatus) {
-        setErrors({general: error.error});
-      } else if(error.status === 422) {
-        setErrors(error.data.errors);
-      } else if (error.status === 400 || 500) {
-        setErrors({ general: `${error?.data?.status}: ${error?.data?.message}. ${error?.data?.error}` });
-      } else {
-        setErrors({ general: 'Register Failed' });
+        dispatch(setCredentials({ user: user, accessToken: access_token, rememberMe: true }));
+
+        navigate('/welcome');
       }
+      catch (errorData) {
+        if (errorData.originalStatus) {
+          setErrors({general: errorData.error});
+        } else if(errorData.status === 422) {
+          setErrors(errorData.data.errors);
+        } else if (errorData.status === 400 || 500) {
+          let status = errorData?.data?.data?.status;
+          let message = errorData?.data?.data?.message;
+          let error = errorData?.data?.data?.error;
 
-      myLog('Register', 'handleSubmit', `error - ${JSON.stringify(error)}`);
+          let errorMessage = `${status ? status : ''}: ${message ? message : ''}. ${error ? error : ''}`;
 
-      errorRef?.current?.focus();
+          setErrors({ general: errorMessage });
+        } else {
+          setErrors({ general: 'Register Failed' });
+        }
+
+        myLog('Register', 'handleSubmit', `error - ${JSON.stringify(errorData)}`);
+
+        errorRef?.current?.focus();
+      }
+    }
+    else {
+      e.stopPropagation();
+      setErrors({ general: 'Please fill out all required fields correctly.' });
     }
   };
 
@@ -78,23 +92,22 @@ const Register = () => {
               <h3>Sign Up</h3>
 
               <Form.Group className="mb-3" controlId="first_name">
-                <Form.Label>
-                  First name
-                  <Form.Control
-                    type="text"
-                    placeholder="John"
-                    ref={firstNameRef}
-                    value={formData.first_name}
-                    onChange={handleChange}
-                    name="first_name"
-                    isInvalid={errors.hasOwnProperty('first_name')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>First name</Form.Label>
+
+                <Form.Control
+                  type="text"
+                  placeholder="John"
+                  ref={firstNameRef}
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  name="first_name"
+                  isInvalid={errors.hasOwnProperty('first_name')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('first_name') && errors.first_name[0]}
@@ -102,22 +115,21 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="last_name">
-                <Form.Label>
-                  Last name
-                  <Form.Control
-                    type="text"
-                    placeholder="Doe"
-                    value={formData.last_name}
-                    onChange={handleChange}
-                    name="last_name"
-                    isInvalid={errors.hasOwnProperty('last_name')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Last name</Form.Label>
+
+                <Form.Control
+                  type="text"
+                  placeholder="Doe"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  name="last_name"
+                  isInvalid={errors.hasOwnProperty('last_name')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('last_name') && errors.last_name[0]}
@@ -125,22 +137,21 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="username">
-                <Form.Label>
-                  Username
-                  <Form.Control
-                    type="text"
-                    placeholder="john_doe123"
-                    value={formData.username}
-                    onChange={handleChange}
-                    name="username"
-                    isInvalid={errors.hasOwnProperty('username')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Username</Form.Label>
+
+                <Form.Control
+                  type="text"
+                  placeholder="john_doe123"
+                  value={formData.username}
+                  onChange={handleChange}
+                  name="username"
+                  isInvalid={errors.hasOwnProperty('username')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('username') && errors.username[0]}
@@ -148,22 +159,21 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="email">
-                <Form.Label>
-                  Email address
-                  <Form.Control
-                    type="email"
-                    placeholder="johndoe@gmail.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    name="email"
-                    isInvalid={errors.hasOwnProperty('email')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Email address</Form.Label>
+
+                <Form.Control
+                  type="email"
+                  placeholder="johndoe@gmail.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  name="email"
+                  isInvalid={errors.hasOwnProperty('email')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('email') && errors.email[0]}
@@ -171,22 +181,20 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="password">
-                <Form.Label>
-                  Password
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    name="password"
-                    isInvalid={errors.hasOwnProperty('password')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  name="password"
+                  isInvalid={errors.hasOwnProperty('password')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('password') && errors.password[0]}
@@ -194,22 +202,20 @@ const Register = () => {
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="password_confirmation">
-                <Form.Label>
-                  Password Confirmation
-                  <Form.Control
-                    type="password"
-                    placeholder="Enter password again"
-                    value={formData.password_confirmation}
-                    onChange={handleChange}
-                    name="password_confirmation"
-                    isInvalid={errors.hasOwnProperty('password_confirmation')}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter') {
-                        await handleSubmit(e);
-                      }
-                    }}
-                    required/>
-                </Form.Label>
+                <Form.Label>Password Confirmation</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password again"
+                  value={formData.password_confirmation}
+                  onChange={handleChange}
+                  name="password_confirmation"
+                  isInvalid={errors.hasOwnProperty('password_confirmation')}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter') {
+                      await handleSubmit(e);
+                    }
+                  }}
+                  required/>
 
                 <Form.Control.Feedback type="invalid">
                   {errors && errors.hasOwnProperty('password_confirmation') && errors.password_confirmation[0]}

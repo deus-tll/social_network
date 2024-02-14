@@ -169,10 +169,8 @@ components:
       type: object
     LoginRequest:
       required:
-        - name
         - email
         - password
-        - password_confirmation
       properties:
         email:
           type: string
@@ -184,15 +182,16 @@ components:
       type: object
     RegisterRequest:
       required:
-        - name
+        - first_name
+        - last_name
         - email
         - password
         - password_confirmation
       properties:
-        firstName:
+        first_name:
           type: string
           example: John
-        lastName:
+        last_name:
           type: string
           example: Doe
         email:
@@ -205,7 +204,7 @@ components:
         password:
           type: string
           example: '123456'
-        passwordConfirmation:
+        password_confirmation:
           type: string
           example: '123456'
       type: object
@@ -245,10 +244,10 @@ components:
         id:
           type: integer
           example: '2'
-        firstName:
+        first_name:
           type: string
           example: John
-        lastName:
+        last_name:
           type: string
           example: Doe
         email:

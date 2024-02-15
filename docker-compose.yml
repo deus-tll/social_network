@@ -90,6 +90,35 @@ services:
     networks:
       - s_net
 
+  db.redis.socket.connections:
+    build:
+      dockerfile: Dockerfile
+      context: ./services/redis
+    container_name: db.redis.socket.connections
+    volumes:
+      - ./volumes/db/redis/sockets:data
+    networks:
+      - s_net
+
+  socket.1:
+    build:
+      dockerfile: Dockerfile
+      context: backend/socket_server
+    container_name: socket.1
+    volumes:
+      - ./backend/socket_server/src:/usr/src/app
+    env_file:
+      - .env
+    environment:
+      - SERVER_NAME=socket_1
+      - SERVER_PORT=3000
+    depends_on:
+      - laravel.api
+      - laravel.jobs.avatars
+      - db.redis.socket.connections
+    networks:
+      - s_net
+
   nginx.router:
     build:
       dockerfile: Dockerfile

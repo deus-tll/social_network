@@ -3,6 +3,8 @@
 namespace App\Jobs\Profile;
 
 use App\Services\Profile\AvatarService;
+use App\Services\Socket\SocketService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,15 +29,15 @@ class OptimizeAvatarJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(AvatarService $avatarService): void
+    public function handle(
+        AvatarService $avatarService,
+        SocketService $socketService): void
     {
         try {
             $avatars = $avatarService->optimizeAvatar($this->userId);
-
-            info('avatars: ', $avatars);
-            //socket
+            $socketService->emit($this->userId, 'avatars.stored', $avatars);
         }
-        catch (\Exception $e){
+        catch (Exception $e){
             error($e->getMessage());
         }
     }

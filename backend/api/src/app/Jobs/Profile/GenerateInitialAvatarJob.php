@@ -3,11 +3,14 @@
 namespace App\Jobs\Profile;
 
 use App\Services\Profile\AvatarService;
+use App\Services\Socket\SocketService;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use function Laravel\Prompts\error;
 
 class GenerateInitialAvatarJob implements ShouldQueue
 {
@@ -27,11 +30,16 @@ class GenerateInitialAvatarJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(AvatarService $avatarService): void
+    public function handle(
+        AvatarService $avatarService,
+        SocketService $socketService): void
     {
-        $avatars = $avatarService->generateAvatar($this->userId);
-
-        info('avatars: ', $avatars);
-        //socket
+        try {
+            $avatars = $avatarService->generateAvatar($this->userId);
+            $socketService->emit($this->userId, 'avatars.stored', $avatars);
+        }
+        catch (Exception $e){
+            error($e->getMessage());
+        }
     }
 }

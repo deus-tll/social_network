@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = 'your_jwt_secret_key';
+const JWT_SECRET = 'MvEhcnr5vgFWXB40Qed9tzouSLHNnRYYY7EbSg8dFkTW8s0kpgQ7JeTQxlzliaYu';
 const JWT_ALGO = 'HS256';
 
 const authMiddleware = (socket, next) => {

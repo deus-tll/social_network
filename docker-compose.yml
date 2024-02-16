@@ -96,7 +96,7 @@ services:
       context: ./services/redis
     container_name: db.redis.socket.connections
     volumes:
-      - ./volumes/db/redis/sockets:data
+      - ./volumes/db/redis/socket_connections:/data
     networks:
       - s_net
 

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { io } from 'socket.io-client';
 import {handleConnect, handleDisconnect, handleMyNameIs, handlePing} from "./socketHandlers";
 import {useSelector} from "react-redux";
@@ -18,10 +18,16 @@ const useSocketConnection = () => {
   //       }
   //     });
   //
+  //     newSocket.connect();
+  //
   //     setSocket(newSocket);
   //   }
+  //
+  //   return () => {
+  //     socket?.disconnect();
+  //   };
   // }, [token]);
-
+  //
   // useEffect(() => {
   //   socket?.on('connect', handleConnect);
   //   socket?.on('disconnect', handleDisconnect);
@@ -34,7 +40,7 @@ const useSocketConnection = () => {
   //     socket?.off('socket.myNameIs', handleMyNameIs);
   //     socket?.off('ping', handlePing);
   //   };
-  // }, [socket]);
+  // });
 
   const connect = () => {
     if (!socket && token) {
@@ -44,10 +50,10 @@ const useSocketConnection = () => {
         }
       });
 
+      newSocket.connect();
+
       setSocket(newSocket);
     }
-
-    socket?.connect();
 
     socket?.on('connect', handleConnect);
     socket?.on('disconnect', handleDisconnect);

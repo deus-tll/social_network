@@ -5,21 +5,9 @@ import Home from "./pages/Home";
 import Welcome from "./pages/Welcome";
 import RequireAuth from "./components/routing/RequireAuth";
 import Register from "./pages/auth/Register";
-import {useEffect} from "react";
-import {useSocket} from "./providers/socket/SocketProvider";
 
 
 function App() {
-  const { socketConnection } = useSocket();
-
-  useEffect(() => {
-    socketConnection.connect();
-
-    return () => {
-      socketConnection.disconnect();
-    };
-  }, [socketConnection]);
-
   return (
     <Routes>
       <Route path="login" element={<Login/>}/>

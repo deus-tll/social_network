@@ -49,8 +49,6 @@ const Register = () => {
         const eventName = 'avatars.stored';
         const callBack = handleAvatarsStored;
 
-        console.log(socketConnection);
-
         socketConnection.on(eventName, callBack);
 
         //navigate('/welcome');

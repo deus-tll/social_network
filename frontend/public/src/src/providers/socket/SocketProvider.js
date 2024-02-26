@@ -1,35 +1,16 @@
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
-import {useSelector} from "react-redux";
-import {selectCurrentToken} from "../../services/auth/authSliceService";
-import {handleAvatarsStored, handleConnect, handleDisconnect} from "./socketHandlers";
+import {createContext, useContext} from 'react';
+import useSocketConnection from "./useSocketConnection";
 
-const SOCKET_SERVER_URL = process.env.REACT_APP_SOCKET_SERVER_URL;
+export const SocketContext = createContext();
 
-const SocketProvider = ({ children }) => {
-  const token = useSelector(selectCurrentToken);
+export const useSocket = () => useContext(SocketContext);
 
-  useEffect(() => {
-    const socket = io(SOCKET_SERVER_URL, {
-      auth: {
-        token: token
-      }
-    });
+export const SocketProvider = ({ children }) => {
+  const socketConnection = useSocketConnection();
 
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
-    socket.on('avatars.stored', handleAvatarsStored);
-
-    return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
-      socket.off('avatars.stored', handleAvatarsStored);
-
-      socket.disconnect();
-    };
-  }, [token]);
-
-  return <>{children}</>;
+  return (
+    <SocketContext.Provider value={{ socketConnection }}>
+      {children}
+    </SocketContext.Provider>
+  );
 };
-
-export default SocketProvider;

@@ -37,7 +37,12 @@ subClient.on('connect', () => {
 /**
  * Create socket server
  */
-const io = new Server();
+const io = new Server({
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 io.use(authMiddleware);
 
@@ -54,4 +59,8 @@ Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
   });
 
   io.listen(Number(SERVER_PORT));
+
+  setInterval(() =>{
+    io.emit('socket.ping', Date.now())
+  }, 6000)
 });

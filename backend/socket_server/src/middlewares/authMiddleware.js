@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = 'MvEhcnr5vgFWXB40Qed9tzouSLHNnRYYY7EbSg8dFkTW8s0kpgQ7JeTQxlzliaYu';
-const JWT_ALGO = 'HS256';
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_ALGO = process.env.JWT_ALGO;
 
 const authMiddleware = (socket, next) => {
   const token = socket.handshake.auth.token;
@@ -9,7 +9,7 @@ const authMiddleware = (socket, next) => {
 
   try {
     const decodedToken = jwt.verify(token, JWT_SECRET, { algorithms: [JWT_ALGO] });
-    console.debug('(authMiddleware) decodedToken: ' + decodedToken);
+    console.debug('(authMiddleware) decodedToken: ' + JSON.stringify(decodedToken));
 
     const userId = decodedToken.sub;
     socket.join('userId_' + userId);

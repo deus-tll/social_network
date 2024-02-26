@@ -3,7 +3,6 @@
 namespace App\Services\Socket;
 use Exception;
 use Redis;
-use RedisException;
 use SocketIO\Emitter;
 use function Laravel\Prompts\error;
 
@@ -26,6 +25,10 @@ class SocketService
 
     public function emit($userId, string $messageName, mixed $messageBody): void
     {
+        $encoded_body = json_encode($messageBody);
+
+        info('avatars in SocketService: ', [$encoded_body]);
+
         $this->emitter->to('userId_' . $userId)->emit($messageName, json_encode($messageBody));
     }
 }

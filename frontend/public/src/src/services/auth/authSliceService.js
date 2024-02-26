@@ -24,11 +24,20 @@ const authSliceService = createSlice({
 
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
+    },
+    setUserAvatars: (state, action) => {
+      const { avatars } = action.payload;
+
+      state.user.avatars = avatars;
+
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      storedUser.avatars = avatars;
+      localStorage.setItem('user', JSON.stringify(storedUser));
     }
   },
 });
 
-export const { setCredentials, logOut } = authSliceService.actions;
+export const { setCredentials, logOut, setUserAvatars } = authSliceService.actions;
 
 export default authSliceService.reducer;
 

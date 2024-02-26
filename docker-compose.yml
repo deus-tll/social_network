@@ -109,6 +109,7 @@ services:
       - ./backend/socket_server/src:/usr/src/app
     env_file:
       - .env
+      - ./backend/api/src/.env
     environment:
       - SERVER_NAME=socket_1
       - SERVER_PORT=3000

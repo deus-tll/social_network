@@ -2,10 +2,12 @@ import AuthWrapper from "../../components/auth/AuthWrapper";
 import { useRegisterMutation } from "../../services/auth/authApiSliceService";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { Alert, Form, Button } from "react-bootstrap";
 import myLog from "../../helpers/myLog";
 import { setCredentials } from "../../services/auth/authSliceService";
+import {handleAvatarsStored} from "../../providers/socket/socketHandlers";
+import {useSocket} from "../../providers/socket/SocketProvider";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
 
   const [register, { isLoading }] = useRegisterMutation();
+  const { socketConnection } = useSocket();
 
   useEffect(() => {
     firstNameRef?.current?.focus();
@@ -43,7 +46,14 @@ const Register = () => {
 
         dispatch(setCredentials({ user: user, accessToken: access_token, rememberMe: true }));
 
-        navigate('/welcome');
+        const eventName = 'avatars.stored';
+        const callBack = handleAvatarsStored;
+
+        console.log(socketConnection);
+
+        socketConnection.on(eventName, callBack);
+
+        //navigate('/welcome');
       }
       catch (errorData) {
         if (errorData.originalStatus) {

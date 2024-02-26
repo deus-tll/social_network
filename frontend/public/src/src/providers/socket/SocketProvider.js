@@ -1,7 +1,7 @@
 import {createContext, useContext} from 'react';
 import useSocketConnection from "./useSocketConnection";
 
-export const SocketContext = createContext();
+const SocketContext = createContext();
 
 export const useSocket = () => useContext(SocketContext);
 

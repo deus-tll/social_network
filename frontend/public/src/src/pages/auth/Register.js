@@ -6,7 +6,7 @@ import {useEffect, useRef, useState} from "react";
 import { Alert, Form, Button } from "react-bootstrap";
 import myLog from "../../helpers/myLog";
 import { setCredentials } from "../../services/auth/authSliceService";
-import {handleAvatarsStored} from "../../providers/socket/socketHandlers";
+import {handleAvatarsStored, setAvatarsStoredCallback} from "../../providers/socket/socketHandlers";
 import {useSocket} from "../../providers/socket/SocketProvider";
 
 const Register = () => {
@@ -47,10 +47,11 @@ const Register = () => {
         dispatch(setCredentials({ user: user, accessToken: access_token, rememberMe: true }));
 
         const eventName = 'avatars.stored';
-        const callBack = handleAvatarsStored;
-
+        const callBack = (data) => handleAvatarsStored(socketConnection, dispatch, data);
+        setAvatarsStoredCallback(callBack);
         socketConnection.on(eventName, callBack);
 
+        //поки вимкнув навігацію для зручності тестування сокет підключення
         //navigate('/welcome');
       }
       catch (errorData) {

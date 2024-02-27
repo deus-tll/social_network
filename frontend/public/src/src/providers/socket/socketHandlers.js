@@ -1,5 +1,7 @@
 import {setUserAvatars} from "../../services/auth/authSliceService";
 
+//// Default Events
+////////////////////////
 export const handleConnect = () => {
   console.log('Connected to socket server');
 };
@@ -16,10 +18,23 @@ export const handlePing = (data) => {
   console.log('Ping from server:', data);
 };
 
-export const handleAvatarsStored = (data) => {
+
+//// Avatars Stored Event
+////////////////////////
+let avatarsStoredCallback;
+
+export const setAvatarsStoredCallback = (callback) => {
+  avatarsStoredCallback = callback;
+};
+
+export const handleAvatarsStored = (socketConnection, dispatch, data) => {
   const avatars = JSON.parse(data);
   console.log('Received avatars:', avatars);
 
-  //тут я розумію що воно не спрацює, бо потрібно через dispatch викликати, але воно в цілому поки не вдається вивести в консоль Received avatars хоча б.
-  setUserAvatars({avatars});
+  dispatch(setUserAvatars({ avatars }));
+
+  if (avatarsStoredCallback) {
+    socketConnection.off('avatars.stored', avatarsStoredCallback);
+  }
 };
+////////////////////////

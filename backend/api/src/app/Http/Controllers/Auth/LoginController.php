@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Resources\Auth\SuccessAuthResource;
+use App\Http\Resources\Auth\SuccessLoginResource;
 use App\Http\Resources\BaseWithResponseResource;
 use App\Http\Resources\Errors\InternalServerErrorResource;
 use App\Services\Auth\JwtService;
@@ -24,7 +24,7 @@ use OpenApi\Attributes as OAT;
         new OAT\Response(
             response: 200,
             description: 'User logged in successfully',
-            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessAuthResource')
+            content: new OAT\JsonContent(ref: '#/components/schemas/SuccessLoginResource')
         ),
         new OAT\Response(
             response: 401,
@@ -45,6 +45,30 @@ use OpenApi\Attributes as OAT;
             )
         ),
         new OAT\Response(
+            response: 422,
+            description: 'Validation errors occurred',
+            content: new OAT\JsonContent(
+                properties: [
+                    new OAT\Property(
+                        property: 'errors',
+                        properties: [
+                            new OAT\Property(
+                                property: 'email',
+                                type: 'array',
+                                items: new OAT\Items(type: 'string', example: 'The email has already been taken.')
+                            ),
+                            new OAT\Property(
+                                property: 'password',
+                                type: 'array',
+                                items: new OAT\Items(type: 'string', example: 'The password field is required.')
+                            )
+                        ],
+                        type: 'object'
+                    )
+                ],
+            )
+        ),
+        new OAT\Response(
             response: 500,
             description: 'Some internal server error occurred',
             content: new OAT\JsonContent(ref: '#/components/schemas/InternalServerErrorResource')
@@ -56,12 +80,12 @@ class LoginController extends Controller
         private readonly JwtService  $jwtService,
     ){}
 
-    public function __invoke(LoginRequest $request): SuccessAuthResource|BaseWithResponseResource|InternalServerErrorResource
+    public function __invoke(LoginRequest $request): SuccessLoginResource|BaseWithResponseResource|InternalServerErrorResource
     {
         try {
             $token = $this->jwtService->guardApiAttempt($request->validated());
 
-            return $this->jwtService->buildResponse($token, 'User logged in successfully');
+            return $this->jwtService->buildResponseLogin($token);
         }
         catch (Exception $e) {
             return new InternalServerErrorResource(['error' => $e->getMessage()]);

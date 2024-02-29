@@ -12,11 +12,23 @@ readonly class AvatarStorageService
 
         Storage::disk(env('AVATAR_DISK'))->put($path, $avatar);
 
-        return Storage::disk(env('AVATAR_DISK'))->url($path);
+        return $this->getAvatarUrl($path);
     }
 
     private function getAvatarPath(int $userId, string $avatarType, string $extension): string
     {
         return $userId . '/' . $avatarType . '.' . $extension;
+    }
+
+    public function getAvatars(int $userId): array
+    {
+        $fileDir = '/' . $userId . '/';
+
+        return Storage::disk(env('AVATAR_DISK'))->files($fileDir);
+    }
+
+    public function getAvatarUrl(string $path): string
+    {
+        return Storage::disk(env('AVATAR_DISK'))->url($path);
     }
 }

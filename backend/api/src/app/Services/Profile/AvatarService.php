@@ -41,20 +41,16 @@ readonly class AvatarService
 
         $avatars = [];
 
+        $files = $this->storageService->getAvatars($userId);
+
+        $originalFile = $this->isThereOriginal($files);
+
         foreach ($avatarSizes as $type => $config) {
             if ($type === 'default') {
                 continue;
             }
 
             $size = $config['size'];
-
-            $fileDir = '/' . $userId . '/';
-
-            $files = Storage::disk(env('AVATAR_DISK'))->files($fileDir);
-
-            $originalFile = collect($files)->first(function ($file) {
-                return Str::startsWith(pathinfo($file, PATHINFO_BASENAME), 'original');
-            });
 
             if($originalFile) {
                 $fileContent = Storage::disk(env('AVATAR_DISK'))->get($originalFile);
@@ -71,6 +67,37 @@ readonly class AvatarService
         return $avatars;
     }
 
+
+    private function isThereOriginal(array $files)
+    {
+        return collect($files)->first(function ($file) {
+            return Str::startsWith(pathinfo($file, PATHINFO_BASENAME), 'original');
+        });
+    }
+
+
+    public function getUserAvatarUrls(int $userId): array
+    {
+        $avatars = [];
+        $files = $this->storageService->getAvatars($userId);
+
+        $originalFile = collect($files)->first(function ($file) {
+            return Str::startsWith(pathinfo($file, PATHINFO_BASENAME), 'original');
+        });
+
+        if (!$originalFile) {
+            $avatars['url_original'] = null;
+        }
+
+
+        foreach ($files as $filePath)
+        {
+            $name = pathinfo($filePath, PATHINFO_FILENAME);
+            $avatars['url_' . $name] = $this->storageService->getAvatarUrl($filePath);
+        }
+
+        return $avatars;
+    }
 
 
     /**
@@ -102,7 +129,8 @@ readonly class AvatarService
         return [
             'url_large' => $urlLarge,
             'url_medium' => $urlMedium,
-            'url_small' => $urlSmall
+            'url_small' => $urlSmall,
+            'url_original' => null
         ];
     }
 

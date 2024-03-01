@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 
 readonly class UserService
 {
-    public function __construct(private UserRepository $userRepository){}
+    public function __construct(private UserRepository $userRepository, private EmailVerificationService $emailVerificationService){}
 
     public function create(mixed $data): Model|Builder
     {
         $user = $this->userRepository->create($data);
+
+        $this->emailVerificationService->sendVerificationLink($user);
 
         GenerateInitialAvatarJob::dispatch($user->id)
             ->onQueue('avatars.jobs');

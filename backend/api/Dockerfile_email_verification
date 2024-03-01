@@ -1,0 +1,39 @@
+# Installing the PHP base image
+FROM php:8.3-fpm
+
+# Installing the unzip utility
+RUN apt update && apt install -y unzip mc
+
+# Installing supervisord
+RUN apt-get install -y supervisor
+
+# Installing Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Installing additional PHP extensions for Redis
+RUN pecl install redis && docker-php-ext-enable redis
+# Installing the necessary PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql
+# Installing Imagick extension
+RUN apt-get install -y libmagickwand-dev \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick
+
+# Set the working directory
+WORKDIR /var/www/html
+# Copying and installing PHP dependencies
+COPY src /var/www/html
+RUN composer install
+
+# Publication of providers
+RUN php /var/www/html/artisan vendor:publish --provider="PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider"
+RUN php /var/www/html/artisan vendor:publish --provider="Creativeorange\Gravatar\GravatarServiceProvider"
+
+# Supervisor configuration for managing PHP-FPM and Laravel queue worker (avatars.jobs).
+COPY supervisor_email_verification.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Open a port to access the application
+EXPOSE 8000
+
+# Starting container services
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

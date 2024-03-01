@@ -58,6 +58,11 @@ use OpenApi\Attributes as OAT;
                                 items: new OAT\Items(type: 'string', example: 'The email has already been taken.')
                             ),
                             new OAT\Property(
+                                property: 'email',
+                                type: 'array',
+                                items: new OAT\Items(type: 'string', example: 'The email field is required.')
+                            ),
+                            new OAT\Property(
                                 property: 'password',
                                 type: 'array',
                                 items: new OAT\Items(type: 'string', example: 'The password field is required.')

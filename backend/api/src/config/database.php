@@ -162,6 +162,15 @@ return [
             'password' => env('REDIS_JOBS_PASSWORD', null),
             'port' => env('REDIS_JOBS_PORT', '6379'),
             'database' => env('REDIS_JOBS_AVATARS_DB', '1'),
+        ],
+
+        'email_verification' => [
+            'url' => env('REDIS_NOTIFICATIONS_URL'),
+            'host' => env('REDIS_NOTIFICATIONS_HOST', '127.0.0.1'),
+            'username' => env('REDIS_NOTIFICATIONS_USERNAME'),
+            'password' => env('REDIS_NOTIFICATIONS_PASSWORD', null),
+            'port' => env('REDIS_NOTIFICATIONS_PORT', '6379'),
+            'database' => env('REDIS_NOTIFICATIONS_EMAIL_VERIFICATION_DB', '1'),
         ]
     ],
 

@@ -78,6 +78,14 @@ return [
             'retry_after' => 90,
             'block_for' => null,
         ],
+
+        'redis_email_verification' => [
+            'driver' => 'redis',
+            'connection' => 'email_verification',
+            'queue' => env('REDIS_EMAIL_VERIFICATION_QUEUE', 'email.verification.notifications'),
+            'retry_after' => 90,
+            'block_for' => null,
+        ],
     ],
 
     /*

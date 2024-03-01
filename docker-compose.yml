@@ -55,6 +55,21 @@ services:
     networks:
       - s_net
 
+  laravel.notifications.email_verification:
+    build:
+      dockerfile: Dockerfile_email_verification
+      context: ./backend/api
+    container_name: laravel.notifications.email_verification
+    volumes:
+      - ./backend/api/src:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - db.mysql.main
+      - db.redis.cache
+      - db.redis.jobs
+    networks:
+      - s_net
 
   db.mysql.main:
     build:
@@ -87,6 +102,16 @@ services:
     container_name: db.redis.jobs
     volumes:
       - ./volumes/db/redis/jobs:/data
+    networks:
+      - s_net
+
+  db.redis.notifications:
+    build:
+      dockerfile: Dockerfile
+      context: ./services/redis
+    container_name: db.redis.notifications
+    volumes:
+      - ./volumes/db/redis/notifications:/data
     networks:
       - s_net
 

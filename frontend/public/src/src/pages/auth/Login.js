@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useLoginMutation } from '../../services/auth/authApiSliceService';
 import myLog from '../../helpers/myLog';
-import { setCredentials } from '../../services/auth/authSliceService';
+import {setCredentials, updateUserFields} from '../../services/auth/authSliceService';
 import AuthWrapper from '../../components/auth/AuthWrapper';
 
 const Login = () => {
@@ -41,15 +41,18 @@ const Login = () => {
         const access_token = result.data.authorization.access_token;
         const user = result.data.user;
 
+        user.avatars = result.data.avatars;
+
         dispatch(setCredentials({ user, accessToken: access_token, rememberMe }));
 
         navigate('/welcome');
-      } catch (errorData) {
+      }
+      catch (errorData) {
         if (errorData.originalStatus) {
           setErrors({general: errorData.error});
         } else if(errorData.status === 422) {
           setErrors(errorData.data.errors);
-        } else if (errorData.status === 401 || 500) {
+        } else if (errorData.status === 401 || errorData.status === 500) {
           let status = errorData?.data?.data?.status;
           let message = errorData?.data?.data?.message;
           let error = errorData?.data?.data?.error;
@@ -84,7 +87,7 @@ const Login = () => {
     <AuthWrapper>
       <section>
         {isLoading ? (
-          <h1>Loading...</h1>
+          <h1 className="text-center">Loading...</h1>
         ) : (
           <div>
             <Form onSubmit={handleSubmit}>

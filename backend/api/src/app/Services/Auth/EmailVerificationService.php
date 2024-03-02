@@ -7,12 +7,13 @@ use App\Models\EmailVerificationToken;
 use App\Models\User;
 use App\Notifications\EmailVerificationNotification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class EmailVerificationService
+readonly class EmailVerificationService
 {
     /**
      * Generate verification link
@@ -71,7 +72,13 @@ class EmailVerificationService
 
         if ($user->markEmailAsVerified()) {
             $verifiedTokenResult->delete();
-            return new BaseWithResponseResource(null, 'Email has been verified successfully');
+
+            $data = [
+                'email_verified_at' => $user->email_verified_at,
+                'updated_at' => $user->updated_at
+            ];
+
+            return new BaseWithResponseResource($data, 'Email has been verified successfully');
         }
         else {
             return new BaseWithResponseResource(null, 'Verification failed, please try again later', ResponseAlias::HTTP_EXPECTATION_FAILED, 'failure');
@@ -82,7 +89,7 @@ class EmailVerificationService
     /**
      * Verify token
      */
-    public function verifyToken(string $email, string $token): BaseWithResponseResource|Builder
+    public function verifyToken(string $email, string $token): Model|BaseWithResponseResource|Builder
     {
         $foundToken = EmailVerificationToken::query()->where('email', $email)->where('token', $token)->first();
 

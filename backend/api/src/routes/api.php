@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerifyUserEmailController;
 use App\Http\Controllers\Profile\UploadUserAvatarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,8 +32,12 @@ Route::group([
 ], function() {
     Route::get('auth/profile', ProfileController::class)->name('api.auth.profile');
     Route::get('auth/logout', LogoutController::class)->name('api.auth.logout');
+    Route::post('auth/verify-email', [VerifyUserEmailController::class, 'verifyUserEmail'])->name('api.auth.verify-email');
+    Route::post('auth/resend-email-verification-link', [VerifyUserEmailController::class, 'resendEmailVerificationLink'])->name('api.auth.resend-email-verification-link');
 });
 
-Route::group(['middleware' => ['auth:api'], 'prefix' => 'profile'], function () {
+Route::group([
+    'middleware' => ['auth:api'], 'prefix' => 'profile'
+], function () {
     Route::post('/avatar', UploadUserAvatarController::class)->name('profile.avatar.upload');
 });

@@ -59,7 +59,7 @@ const Register = () => {
           setErrors({general: errorData.error});
         } else if(errorData.status === 422) {
           setErrors(errorData.data.errors);
-        } else if (errorData.status === 400 || 500) {
+        } else if (errorData.status === 400 || errorData.status === 500) {
           let status = errorData?.data?.data?.status;
           let message = errorData?.data?.data?.message;
           let error = errorData?.data?.data?.error;

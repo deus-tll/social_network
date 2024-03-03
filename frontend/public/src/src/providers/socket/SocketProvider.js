@@ -1,20 +1,24 @@
 import {createContext, useContext, useEffect} from 'react';
+import {useSelector} from "react-redux";
+
 import useSocketConnection from "./useSocketConnection";
+import {selectCurrentToken} from "../../services/auth/authSliceService";
+
 
 const SocketContext = createContext();
-
 export const useSocket = () => useContext(SocketContext);
 
-export const SocketProvider = ({ children }) => {
+const SocketProvider = ({ children }) => {
+  const token = useSelector(selectCurrentToken);
   const socketConnection = useSocketConnection();
 
   useEffect(() => {
-    socketConnection.connect();
+    socketConnection.connect(token);
 
     return () => {
-      socketConnection.disconnect();
+      socketConnection.close();
     };
-  }, [socketConnection]);
+  }, [socketConnection, token]);
 
   return (
     <SocketContext.Provider value={{ socketConnection }}>
@@ -22,3 +26,5 @@ export const SocketProvider = ({ children }) => {
     </SocketContext.Provider>
   );
 };
+
+export default SocketProvider;

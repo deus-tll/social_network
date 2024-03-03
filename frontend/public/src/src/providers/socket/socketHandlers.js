@@ -1,5 +1,6 @@
 import {updateUserFields} from "../../services/auth/authSliceService";
 
+
 //// Default Events
 ////////////////////////
 export const handleConnect = () => {
@@ -27,7 +28,7 @@ export const setAvatarsStoredCallback = (callback) => {
   avatarsStoredCallback = callback;
 };
 
-export const handleAvatarsStored = (socketConnection, dispatch, data) => {
+export const handleAvatarsStored = (socketConnection, dispatch, data, eventName) => {
   const avatars = JSON.parse(data);
   console.log('Received avatars:', avatars);
 
@@ -38,7 +39,7 @@ export const handleAvatarsStored = (socketConnection, dispatch, data) => {
   dispatch(updateUserFields({fieldsToUpdate}));
 
   if (avatarsStoredCallback) {
-    socketConnection.off('avatars.stored', avatarsStoredCallback);
+    socketConnection.off(eventName, avatarsStoredCallback);
   }
 };
 ////////////////////////

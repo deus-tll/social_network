@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import myLog from "../../helpers/myLog";
+
 
 const authSliceService = createSlice({
   name: 'auth',
@@ -28,8 +28,6 @@ const authSliceService = createSlice({
     },
     updateUserFields: (state, action) => {
       const { fieldsToUpdate } = action.payload;
-
-      myLog('authSliceService', 'updateUserFields', JSON.stringify(fieldsToUpdate));
 
       Object.keys(fieldsToUpdate).forEach(field => {
         state.user[field] = fieldsToUpdate[field];

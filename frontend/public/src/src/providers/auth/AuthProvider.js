@@ -1,5 +1,5 @@
-import {setCredentials} from "../../services/auth/authSliceService";
 import {useDispatch} from "react-redux";
+import {setCredentials} from "../../services/auth/authSliceService";
 
 
 const AuthProvider = ({ children }) => {

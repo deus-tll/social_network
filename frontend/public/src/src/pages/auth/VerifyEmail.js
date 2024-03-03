@@ -1,10 +1,11 @@
-import {useNavigate} from "react-router-dom";
-import {useVerifyEmailMutation} from "../../services/auth/authApiSliceService";
 import {useEffect, useState} from "react";
-import {updateUserFields} from "../../services/auth/authSliceService";
 import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import {Alert} from "react-bootstrap";
-import myLog from "../../helpers/myLog";
+
+import {useVerifyEmailMutation} from "../../services/auth/authApiSliceService";
+import {updateUserFields} from "../../services/auth/authSliceService";
+
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -24,8 +25,6 @@ const VerifyEmail = () => {
       try {
         const result = await verifyEmail({ token, email }).unwrap();
 
-        myLog('VerifyEmail', 'handleVerifyEmail', `result ${JSON.stringify(result)}`);
-
         const email_verified_at = result.data.email_verified_at;
         const updated_at = result.data.updated_at;
 
@@ -34,9 +33,8 @@ const VerifyEmail = () => {
           updated_at
         };
 
-        myLog('VerifyEmail', 'handleVerifyEmail', JSON.stringify(fieldsToUpdate));
-
         dispatch(updateUserFields({ fieldsToUpdate }));
+
         setVerificationSuccess(true);
       } catch (errorData) {
         if (errorData.originalStatus) {

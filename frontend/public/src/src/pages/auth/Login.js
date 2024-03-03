@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {Link, useNavigate} from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { Alert, Button, Form } from 'react-bootstrap';
-import { useLoginMutation } from '../../services/auth/authApiSliceService';
-import myLog from '../../helpers/myLog';
-import {setCredentials, updateUserFields} from '../../services/auth/authSliceService';
+import {Alert, Button, Form} from 'react-bootstrap';
+
+import {useLoginMutation} from '../../services/auth/authApiSliceService';
+import {setCredentials} from '../../services/auth/authSliceService';
+
 import AuthWrapper from '../../components/auth/AuthWrapper';
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -13,6 +15,7 @@ const Login = () => {
 
   const emailRef = useRef();
   const errorRef = useRef();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -63,8 +66,6 @@ const Login = () => {
         } else {
           setErrors({ general: 'Login Failed' });
         }
-
-        myLog('Login', 'handleSubmit', `error - ${JSON.stringify(errorData)}`);
 
         errorRef?.current?.focus();
       }
@@ -160,7 +161,7 @@ const Login = () => {
 
               <div className="d-flex align-items-center justify-content-between">
                 <p className="forgot-password text-right">
-                  Forgot <a href="#">password?</a>
+                  Forgot <Link to="/reset-password">password?</Link>
                 </p>
 
                 <p className="forgot-password text-right">

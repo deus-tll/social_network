@@ -1,13 +1,16 @@
-import AuthWrapper from "../../components/auth/AuthWrapper";
-import { useRegisterMutation } from "../../services/auth/authApiSliceService";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import { Alert, Form, Button } from "react-bootstrap";
-import myLog from "../../helpers/myLog";
-import { setCredentials } from "../../services/auth/authSliceService";
+import {useDispatch} from "react-redux";
+import {Link, useNavigate} from "react-router-dom";
+import {Alert, Form, Button} from "react-bootstrap";
+
+import {useRegisterMutation} from "../../services/auth/authApiSliceService";
+import {setCredentials} from "../../services/auth/authSliceService";
+
 import {handleAvatarsStored, setAvatarsStoredCallback} from "../../providers/socket/socketHandlers";
 import {useSocket} from "../../providers/socket/SocketProvider";
+
+import AuthWrapper from "../../components/auth/AuthWrapper";
+
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -15,6 +18,8 @@ const Register = () => {
 
   const firstNameRef = useRef();
   const errorRef = useRef();
+
+  const { socketConnection } = useSocket();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -25,8 +30,16 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
 
+
   const [register, { isLoading }] = useRegisterMutation();
-  const { socketConnection } = useSocket();
+
+  useEffect(() => {
+    const eventName = 'avatars.stored';
+    const callBack = (data) => handleAvatarsStored(socketConnection, dispatch, data, eventName);
+    setAvatarsStoredCallback(callBack);
+    socketConnection.on(eventName, callBack);
+
+  }, [socketConnection, dispatch]);
 
   useEffect(() => {
     firstNameRef?.current?.focus();
@@ -46,13 +59,7 @@ const Register = () => {
 
         dispatch(setCredentials({ user: user, accessToken: access_token, rememberMe: true }));
 
-        const eventName = 'avatars.stored';
-        const callBack = (data) => handleAvatarsStored(socketConnection, dispatch, data);
-        setAvatarsStoredCallback(callBack);
-        socketConnection.on(eventName, callBack);
-
-        //поки вимкнув навігацію для зручності тестування сокет підключення
-        //navigate('/welcome');
+        navigate('/welcome');
       }
       catch (errorData) {
         if (errorData.originalStatus) {
@@ -70,8 +77,6 @@ const Register = () => {
         } else {
           setErrors({ general: 'Register Failed' });
         }
-
-        myLog('Register', 'handleSubmit', `error - ${JSON.stringify(errorData)}`);
 
         errorRef?.current?.focus();
       }

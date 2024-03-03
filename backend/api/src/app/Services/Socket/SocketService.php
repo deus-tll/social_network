@@ -27,8 +27,6 @@ class SocketService
     {
         $encoded_body = json_encode($messageBody);
 
-        info('avatars in SocketService: ', [$encoded_body]);
-
         $this->emitter->to('userId_' . $userId)->emit($messageName, json_encode($messageBody));
     }
 }

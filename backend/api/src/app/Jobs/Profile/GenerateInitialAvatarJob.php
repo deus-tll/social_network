@@ -37,8 +37,6 @@ class GenerateInitialAvatarJob implements ShouldQueue
         try {
             $avatars = $avatarService->generateAvatar($this->userId);
 
-            info('avatars in GenerateInitialAvatarJob: ', [$avatars]);
-
             $socketService->emit($this->userId, 'avatars.stored', $avatars);
         }
         catch (Exception $e){
